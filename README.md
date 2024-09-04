@@ -1,5 +1,8 @@
 ## This version has achieved 86.6%(26/30) of the overall dressing score several times.
-Please refer to the test_dressing_success_v1.py in `/template`.
+- Please refer to the test_dressing_success_v1.py in the `/template` folder.
+- For detection & segmentation model checkpoints please refer to `EuniceF/lying_person_detection` and `EuniceF/sponge_watertank` at https://huggingface.co/models.
+- For YOLO usage examples, please refer to `/template/yolo8_pose.py` and `/template/yolo8_seg.py`.
+
 Some screenshots:
 
 ![alt text](template/rgb_hand3_pose.jpg)
@@ -11,10 +14,7 @@ Some screenshots:
 ![alt text](yolo_results/human_yolo_result01.jpg)
 ![alt text](yolo_results/human_yolo_result02.jpg)
 
-## Detection & Segmentation models' checkpoints for above
-Please refer to `EuniceF/lying_person_detection` and `EuniceF/sponge_watertank` on https://huggingface.co/models. 
 
-For usage examples, please refer to `/template/yolo8_pose.py` and `/template/yolo8_seg.py`.
 
 ![alt text](rcareworld.png)
 # Here is the code for RCareWorld PhyRC Challenge 🦾
