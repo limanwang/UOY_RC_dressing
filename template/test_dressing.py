@@ -25,6 +25,7 @@ def _main(use_graphics=False):
     # Initialize the environment
     # env = DressingEnv(graphics=use_graphics)
     # Load a model
+    # model = YOLO("yolov8x-pose-p6.pt")  # load an official model
     model = YOLO("yolov8n-pose.pt")  # load an official model
 
     env = DressingEnv(graphics=use_graphics)
@@ -56,12 +57,26 @@ def _main(use_graphics=False):
 
 
     # Random positions and rotation
-    # 横向，z，y轴
     position1 = (1.5, 2.3, 0.6)
     rotation2 = (0, 0, -90)
 
     env.step(300)
 
+    # # Move the robot to the first position
+    # robot.IKTargetDoMove(
+    #     position=[position1[0], position1[1], position1[2]],
+    #     duration=2,
+    #     speed_based=False,
+    # )
+    # robot.WaitDo()
+
+    # Move the robot to the position
+    # robot.IKTargetDoMove(
+    #     position=[position1[0]+0.42, position1[1]-0.55, position1[2]-0.7],
+    #     duration=2,
+    #     speed_based=False,
+    # )
+    # robot.WaitDo()
  
      # Move the robot to the first position
     robot.IKTargetDoMove(
@@ -91,25 +106,37 @@ def _main(use_graphics=False):
     # position1[1]-0.15
     # position1[2]-0.63
     robot.IKTargetDoMove(
-        position=[position1[0]+0.5, position1[1]-0.13, position1[2]-0.5],
-        duration=3,
+        position=[position1[0]+0.46, position1[1]-0.13, position1[2]-0.51],
+        duration=2,
         speed_based=False,
     )
     robot.WaitDo()
-    env.step(400)
 
+
+    # robot.IKTargetDoRotate(
+    #     rotation=[rotation[0], rotation[1], rotation[2]],
+    #     duration=2,
+    #     speed_based=False,
+    # )
+    # robot.WaitDo()
+
+    # robot.IKTargetDoRotate(
+    # rotation=[rotation2[0], rotation2[1], rotation2[2]],
+    # duration=2,
+    # speed_based=False,
+    # )
+    # robot.WaitDo()
 
     # Retrieve cloth particle data after moving the robot
     cloth.GetParticles()
     env.step()
-    
 
 
     gripper.GripperClose()
-    env.step(100)
+    env.step(300)
     # env.step(300)
 
-    cloth.AddAttach(id=3158930, max_dis=0.3)
+    cloth.AddAttach(id=3158930, max_dis=0.4)
 
     # robot.set_cloth_and_robot(cloth_id=3158930,cloth_name='cloth',robot_id=315893,gripper_name='gripper',grasp_radius=0.5)
 
@@ -120,11 +147,25 @@ def _main(use_graphics=False):
         speed_based=False,
     )
     robot.WaitDo()
-    env.step(100)
 
 
+        # Move the robot to the position
+    # robot.IKTargetDoMove(
+    #     position=[position1[0]+0.45, position1[1]-0.55, position1[2]],
+    #     duration=2,
+    #     speed_based=False,
+    # )
+    # robot.WaitDo()  
 
-    # rotate cloth 180
+        # Move the robot to the dressing position
+    # robot.IKTargetDoMove(
+    #     position=[position1[0]+0.3, position1[1]-0.6, position1[2]-0.6],
+    #     duration=2,
+    #     speed_based=False,
+    # )
+    # robot.WaitDo()
+
+    # cloth 180
     robot.IKTargetDoRotate(
     rotation=[rotation2[0], rotation2[1], rotation2[2]-90],
     duration=2,
@@ -140,11 +181,11 @@ def _main(use_graphics=False):
     robot.WaitDo()
 
 
-    # go to the detecting postion
+    # 
      # Move the robot to the position
     robot.IKTargetDoMove(
         position=[position1[0]-0.3, position1[1]-0.5, position1[2]+0.2],
-        duration=4,
+        duration=2,
         speed_based=False,
     )
     robot.WaitDo()
@@ -152,7 +193,7 @@ def _main(use_graphics=False):
     robot.IKTargetDoRotate(
     # (roll, pitch, yaw)
     rotation=[rotation2[0]+98, rotation2[1]+90, rotation2[2]],
-    duration=4,
+    duration=2,
     speed_based=False,
     )
     robot.WaitDo()
@@ -163,6 +204,8 @@ def _main(use_graphics=False):
     env.step()
     rgb = cv2.imdecode(rgb, cv2.IMREAD_COLOR)
     cv2.imwrite("rgb_hand3.png", rgb)
+
+    env.step(300)
     results = model(["rgb_hand3.png"])
 
     # Initialize a list to store the x-coordinates of the left wrist points
@@ -183,22 +226,22 @@ def _main(use_graphics=False):
                 left_wrist_point = person_keypoints[9][:2]  # Get x, y coordinates (ignore confidence)
                 left_wrist_x_coords.append(left_wrist_point[0].item())  # Append the x-coordinate to the list
                 confidence = person_keypoints[9][2]  # Get the confidence score
-                # print(f"Person {i + 1} - Left wrist point (index 9): {left_wrist_point}, Confidence: {confidence.item()}")
+                print(f"Person {i + 1} - Left wrist point (index 9): {left_wrist_point}, Confidence: {confidence.item()}")
 
     # Calculate the mean of the x-coordinates
     if left_wrist_x_coords:
         mean_x = sum(left_wrist_x_coords) / len(left_wrist_x_coords)
-        # print(f"Mean of the x-coordinates of all left wrist points: {mean_x}")
+        print(f"Mean of the x-coordinates of all left wrist points: {mean_x}")
 
     # Calculate deta based on mean_x
     if mean_x != 312:
-        deta = -(mean_x - 312) * 0.008
-        # print(f"Calculated deta: {deta}")
+        deta = -(mean_x - 312) * 0.002
+        print(f"Calculated deta: {deta}")
     else:
         deta = 0
-        # print("mean_x is equal to 312, deta is set to 0")
+        print("mean_x is equal to 312, deta is set to 0")
 
-    env.step(100)
+    env.step(300)
 
 
 
@@ -209,19 +252,11 @@ def _main(use_graphics=False):
     # )
     # robot.WaitDo()
 
-    # Move the robot to the unfolding position
-    robot.IKTargetDoMove(
-        position=[position1[0]-0.78, position1[1]-0.5, position1[2]+0.6],
-        duration=2,
-        speed_based=False,
-    )
-    robot.WaitDo()
-    env.step(100)
 
-    # Move the robot to the pre-dressing position
+
     robot.IKTargetDoMove(
         position=[position1[0]-0.56 + deta, position1[1]-0.6, position1[2]],
-        duration=4,
+        duration=2,
         speed_based=False,
     )
     robot.WaitDo()
@@ -236,13 +271,13 @@ def _main(use_graphics=False):
 
     # Move the robot to the dressing position
     robot.IKTargetDoMove(
-        position=[position1[0]-0.53 + deta, position1[1]-0.65, position1[2]-0.1],
+        position=[position1[0]-0.53 + deta, position1[1]-0.65, position1[2]],
         duration=2,
         speed_based=False,
     )
     robot.WaitDo()
 
-    # Move the cloth in 
+    # Move the robot to the position
     robot.IKTargetDoMove(
         position=[position1[0]-0.52 + deta, position1[1]-0.65, position1[2]-0.1],
         duration=2,
@@ -250,117 +285,9 @@ def _main(use_graphics=False):
     )
     robot.WaitDo()
 
-    # Move the cloth in 
-    # (98,90,0)
-    robot.IKTargetDoRotate(
-    # (roll, pitch, yaw)
-    rotation=[rotation2[0]+98, rotation2[1]+120, rotation2[2]],
-    duration=4,
-    speed_based=False,
-    )
-    robot.WaitDo()
-
-    robot.IKTargetDoMove(
-        position=[position1[0]-0.52 + deta, position1[1]-0.66, position1[2]-0.2],
-        duration=2,
-        speed_based=False,
-    )
-    robot.WaitDo()
-
-    # Move the cloth in 
-    robot.IKTargetDoMove(
-        position=[position1[0]-0.51 + deta, position1[1]-0.66, position1[2]-0.35],
-        duration=2,
-        speed_based=False,
-    )
-    robot.WaitDo()
-
-    # Move the cloth in 
-    robot.IKTargetDoMove(
-        position=[position1[0]-0.50 + deta, position1[1]-0.66, position1[2]-0.45],
-        duration=2,
-        speed_based=False,
-    )
-    robot.WaitDo()
-
-    # Move the robot to the drop position
-    robot.IKTargetDoMove(
-        position=[position1[0]-0.50 + deta, position1[1]-0.66, position1[2]-0.55],
-        duration=2,
-        speed_based=False,
-    )
-    robot.WaitDo()
-
-
-    gripper.GripperOpen()
-    env.step(100)
-    cloth.RemoveAttach(3158930)
-
-
-    # Move the robot to the right cuff position
-    robot.IKTargetDoMove(
-        position=[position1[0]-0.5 + deta, position1[1]-0.3, position1[2]-0.3],
-        duration=2,
-        speed_based=False,
-    )
-    robot.WaitDo()
-
-    env.step(100)
-
-    robot.IKTargetDoRotate(
-    # (roll, pitch, yaw)
-    rotation=[rotation2[0], rotation2[1], rotation2[2]-90],
-    duration=2,
-    speed_based=False,
-    )
-    robot.WaitDo()
-
-    robot.IKTargetDoMove(
-        position=[position1[0]-0.2 + deta, position1[1]-1, position1[2]-0.4],
-        duration=4,
-        speed_based=False,
-    )
-    robot.WaitDo()
-
-    gripper.GripperClose()
-    env.step(100)
-    cloth.AddAttach(id=3158930, max_dis=0.1)
-
-    # drag a little bit
-    robot.IKTargetDoMove(
-        position=[position1[0]-0.15 + deta, position1[1]-1, position1[2]-0.3],
-        duration=3,
-        speed_based=False,
-    )
-    robot.WaitDo()
-
-    # Move the robot to the right wirst position
-    robot.IKTargetDoMove(
-        position=[position1[0]-0.15 + deta, position1[1]-0.7, position1[2]+0.1],
-        duration=3,
-        speed_based=False,
-    )
-    robot.WaitDo()
-    
-    robot.IKTargetDoMove(
-        position=[position1[0]-0.05 + deta, position1[1]-0.65, position1[2]+0.2],
-        duration=3,
-        speed_based=False,
-    )
-    robot.WaitDo()
-
-
     # Move the robot to the position
     robot.IKTargetDoMove(
-        position=[position1[0]-0.05 + deta, position1[1]-0.65, position1[2]-0.1],
-        duration=3,
-        speed_based=False,
-    )
-    robot.WaitDo()
-
-    # Move the robot to the position
-    robot.IKTargetDoMove(
-        position=[position1[0]-0.05 + deta, position1[1]-0.65, position1[2]-0.35],
+        position=[position1[0]-0.52 + deta, position1[1]-0.65, position1[2]-0.2],
         duration=2,
         speed_based=False,
     )
@@ -368,15 +295,43 @@ def _main(use_graphics=False):
 
     # Move the robot to the position
     robot.IKTargetDoMove(
-        position=[position1[0]-0.05 + deta, position1[1]-0.65, position1[2]-0.5],
+        position=[position1[0]-0.51 + deta, position1[1]-0.65, position1[2]-0.3],
         duration=2,
         speed_based=False,
     )
     robot.WaitDo()
+
+    # Move the robot to the position
+    robot.IKTargetDoMove(
+        position=[position1[0]-0.51 + deta, position1[1]-0.65, position1[2]-0.4],
+        duration=2,
+        speed_based=False,
+    )
+    robot.WaitDo()
+
+        # Move the robot to the position
+    robot.IKTargetDoMove(
+        position=[position1[0]-0.51 + deta, position1[1]-0.65, position1[2]-0.5],
+        duration=2,
+        speed_based=False,
+    )
+    robot.WaitDo()
+
+            # Move the robot to the position
+    robot.IKTargetDoMove(
+        position=[position1[0]-0.51 + deta, position1[1]-0.65, position1[2]-0.55],
+        duration=2,
+        speed_based=False,
+    )
+    robot.WaitDo()
+
+
+
 
     gripper.GripperOpen()
     env.step(300)
     cloth.RemoveAttach(3158930)
+
 
 
     env.step(30000)
