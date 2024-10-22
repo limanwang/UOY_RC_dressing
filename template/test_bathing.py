@@ -26,34 +26,35 @@ def _main(use_graphics=False):
     env = BathingEnv(graphics=use_graphics)
     print(env.attrs)
 
-    stretch_id = 221582
-    robot = env.GetAttr(stretch_id)
+    robot = env.get_robot()
     env.step()
+    print(robot.data)
 
     # Control the gripper
-    gripper = env.GetAttr(2215820)
+    gripper = env.get_gripper()
     gripper.GripperOpen()
     env.step(300)
 
     gripper.GripperClose()
-    env.step()
+    env.step(300)
 
     # Obtain sponge data and simulate a step
-    sponge = env.GetAttr(91846)
+    sponge = env.get_sponge()
     env.step()
     print(sponge.data)
 
     # Camera operations: Attach a camera to the robot's hand
-    camera_hand = env.GetAttr(654321)
-    camera_hand.SetTransform(position=gripper.data['position'], rotation=[0, 0, 0])
-    camera_hand.SetParent(2215820)
-    camera_hand.GetRGB(512, 512)
+    camera = env.get_camera()
+    camera.SetTransform(position=gripper.data['position'], rotation=[0, 0, 0])
+    camera.SetParent(2215820)
+    camera.GetRGB(512, 512)
     env.step()
-    rgb = np.frombuffer(camera_hand.data["rgb"], dtype=np.uint8)
+    rgb = np.frombuffer(camera.data["rgb"], dtype=np.uint8)
     rgb = cv2.imdecode(rgb, cv2.IMREAD_COLOR)
     cv2.imwrite("rgb_hand.png", rgb)
 
-    # Move the robot to specified positions
+    # Move the robot to some radom pisitions
+    # to note, these positions might not be reachable. The robot will try to reach the closest possible position
     position1 = (0.492, 0.644, 0.03)
     position2 = (0.296, 0.849, 3.168)
 
@@ -69,30 +70,103 @@ def _main(use_graphics=False):
         speed_based=False,
     )
     robot.WaitDo()
+    robot.IKTargetDoKill()
+
+    # disable IK movement
+    # in this mode, you can directly control the robot's joints
+    robot.EnabledNativeIK(False)
+    print('no IK now and move 0')
+
     gripper.GripperClose()
     env.step(50)
+    for i in range(200):
+        robot.SetJointVelocity([0, 0, 0, -0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        env.step()
+
+
+    print('move 1')
+    for i in range(200):
+        robot.SetJointVelocity([0, 0, 0, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        env.step()
+
+
+    print('move 2')
+    for i in range(200):
+        robot.SetJointVelocity([0, 0, 0, -0.5, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0, 0])
+        env.step()    
+
+
+    print('move 3')
+    for i in range(200):
+        robot.SetJointVelocity([0, 0, 0, -0.5, -0.5, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0])
+        env.step()    
+
+
+    print('move 4')
+    for i in range(200):
+        robot.SetJointVelocity([0, 0, 1.8, -0.5, -0.5, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0])
+        env.step()    
+
+    print('move 5')
+    for i in range(200):
+        robot.SetJointVelocity([0, 0, 1.5, -0.5, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0, 0])
+        env.step()   
+
+    print('move 6')
+    for i in range(200):
+        robot.SetJointVelocity([0, 0, -0.5, -0.5, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0, 0])
+        env.step()  
+
+    print('move 7')
+    for i in range(200):
+        robot.SetJointVelocity([0, 0, -1, -0.5, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0, 0])
+        env.step()  
+
+    print('move 8')
+    for i in range(200):
+        robot.SetJointVelocity([0, 0, -1, -0.5, -0.5, -0.5, 0, 0.5, 0, 0, 0, 0, 0, 0])
+        env.step()  
+
+    print('move 9')
+    for i in range(200):
+        robot.SetJointVelocity([0, 0, -1, -0.5, -0.5, -0.5, 0, 0.5, 0.5, 0, 0, 0, 0, 0])
+        env.step()  
+
+    print('move 10')
+    for i in range(200):
+        robot.SetJointVelocity([0, 0, -1, -0.5, -0.5, -0.5, 0, 0.5, 0.5, 0.5, 0, 0, 0, 0])
+        env.step()  
+
+    print('move 11')
+    for i in range(200):
+        robot.SetJointVelocity([0, 0, -1, -0.5, -0.5, -0.5, 0, 0.5, 0.5, 0.5, 0.5, 0, 0, 0])
+        env.step()  
+
+
+
+    robot.EnabledNativeIK(True)
+    print('IK')
     robot.IKTargetDoMove(
-        position=[0, 0.5, 0], duration=2, speed_based=False, relative=True
-    )
-    robot.WaitDo()
-    robot.IKTargetDoMove(
-        position=[position2[0], position2[1] - 0.05, position2[2]],
-        duration=4,
-        speed_based=False,
-    )
-    robot.WaitDo()
-    robot.IKTargetDoMove(
-        position=[position2[0], position2[1] + 0.06, position2[2]],
+        position=[position1[0], position1[1] + 0.5, position1[2]],
         duration=2,
         speed_based=False,
     )
     robot.WaitDo()
     robot.IKTargetDoMove(
-        position=[position1[0], position1[1], position1[2]+1],
+        position=[position1[0], position1[1], position1[2]],
         duration=2,
         speed_based=False,
     )
-    env.step(300)
+    robot.WaitDo()
+
+    # for i in range(200):
+    #     robot.SetJointVelocity([0, 0, 0, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    #     env.step()
+    
+    # for i in range(200):
+    #     robot.SetJointVelocity([0, 0, 0, -0.5, -0.5, -0.5, 0, 0, 0, 0, 0, 0, 0, 0])
+    #     env.step()
+    
     
     """
         The Stretch's movement speed is related to the time in the step() method, as well as the defined distance and speed.
@@ -111,25 +185,25 @@ def _main(use_graphics=False):
 
         Particularly, we do not recommend continuous motion as it can lead to great instability. It is better to interrupt and halt movement intermittently to reduce continuous motion.
     """
-    robot.TurnLeft(90, 1)
+    # robot.TurnLeft(90, 1)
     env.step(600)
     
-    # robot.StopMovement()
-    # env.step(30)
+    # # robot.StopMovement()
+    # # env.step(30)
     
-    robot.TurnRight(90, 1)
-    env.step(600)
+    # robot.TurnRight(90, 1)
+    # env.step(600)
     
-    # robot.StopMovement()
-    # env.step(30)
+    # # robot.StopMovement()
+    # # env.step(30)
     
-    robot.MoveForward(0.6, 0.2)
-    env.step(300)
+    # robot.MoveForward(0.6, 0.2)
+    # env.step(300)
 
 
     # Additional simulation logic can be added here
     # For example:
-    # print("Force", sponge.GetForce())
+    print("Force", sponge.GetForce())
     env.step()
 
 if __name__ == "__main__":
