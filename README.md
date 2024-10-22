@@ -1,5 +1,5 @@
 # This version has joystick 🎮 controllers for remote control.
-- For the remote control files, please refer to the joystick_dressing.py and joystick_bathing.py in the `/template` folder. You can pull and modify the button settings if you'd like to use the keyboard instead of the joystick.
+- For the remote control files, please refer to the joystick_dressing.py and joystick_bathing.py in the `/template` folder. You can pull and modify the button settings if you'd like to use your keyboard instead of the joystick.
 
 - For the YOLO detection grasping and dressing example, please refer to the test_dressing_success_v1.py in the `/template` folder.
 
