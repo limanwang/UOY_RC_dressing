@@ -1,10 +1,10 @@
 # This version has joystick 🎮 controllers for remote control.
 - For the remote control files, please refer to the joystick_dressing.py and joystick_bathing.py in the `/template` folder. You can pull and modify the button settings if you'd like to use the keyboard instead of the joystick.
-- 
+
 - For the YOLO detection grasping and dressing example, please refer to the test_dressing_success_v1.py in the `/template` folder.
-- 
+
 - For detection & segmentation model checkpoints please refer to `EuniceF/lying_person_detection` and `EuniceF/sponge_watertank` at https://huggingface.co/models. Please send me your huggingface username with email then I'll add you to the model-sharing members.
-- 
+
 - For YOLO usage examples, please refer to `/template/yolo8_pose.py` and `/template/yolo8_seg.py`.
 
 Some screenshots:
