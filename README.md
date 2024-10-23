@@ -1,4 +1,5 @@
-## Please take a look at the joystick-control branch as this main branch is no longer maintained. This is the first version submitted to the PhyCare challenge, with YOLO detection grasping and dressing methods.
+## Please refer to the joystick-control branch as this main branch is no longer maintained. 
+- This is the first version submitted to the PhyCare challenge, with YOLO detection grasping and dressing methods.
 - Please refer to the test_dressing_success_v1.py in the `/template` folder.
 - For detection & segmentation model checkpoints please refer to `EuniceF/lying_person_detection` and `EuniceF/sponge_watertank` at https://huggingface.co/models.
 - For YOLO usage examples, please refer to `/template/yolo8_pose.py` and `/template/yolo8_seg.py`.
